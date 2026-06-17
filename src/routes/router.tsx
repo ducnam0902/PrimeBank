@@ -10,20 +10,27 @@ import DashboardPage from "@/pages/Dashboard";
 
 import ProtectedRoute from "@/routes/ProtectedRoute";
 
+export const routes = {
+  login: "/login",
+  register: "/register",
+  forgotPassword: "/forgot-password",
+  dashboard: "/",
+};
+
 export const router = createBrowserRouter([
   {
     element: <AuthLayout />,
     children: [
       {
-        path: "/login",
+        path: routes.login,
         element: <LoginPage />,
       },
       {
-        path: "/register",
+        path: routes.register,
         element: <RegisterPage />,
       },
       {
-        path: "/forgot-password",
+        path: routes.forgotPassword,
         element: <ForgotPasswordPage />,
       },
     ],
@@ -36,7 +43,7 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           {
-            path: "/",
+            path: routes.dashboard,
             element: <DashboardPage />,
           },
         ],
