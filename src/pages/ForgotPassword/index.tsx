@@ -25,7 +25,7 @@ const ForgotPasswordPage = () => {
 
   const onSubmit = (data: ForgotPasswordForm) => {
     console.log(data)
-    navigate(routes.resetPassword)
+    navigate(routes.resetPassword, { replace: true })
   }
 
   return (
