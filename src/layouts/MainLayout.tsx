@@ -38,7 +38,7 @@ export default function MainLayout() {
   }
 
   return (
-    <div>
+    <main className="flex">
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
         <div className="border-b border-sidebar-border px-5 py-5">
           <Link to={routes.dashboard}>
@@ -68,18 +68,16 @@ export default function MainLayout() {
         <div className="border-t border-sidebar-border p-3 text-center">
           <Button
             onClick={handleLogout}
-            className=" text-center gap-3 rounded-md bg-transparent px-3 py-2.5 text-sm font-medium text-destructive hover:bg-muted"
+            className="gap-3 rounded-md bg-transparent px-3 py-2.5 text-center text-sm font-medium text-destructive hover:bg-muted"
           >
             <LogOut className="size-4" />
             Đăng xuất
           </Button>
         </div>
       </aside>
-      <header></header>
-
-      <main>
+      <div className="flex-1">
         <Outlet />
-      </main>
-    </div>
+      </div>
+    </main>
   )
 }
