@@ -1,5 +1,7 @@
 import mockDelay from "@/lib/utils"
 import type { LoginForm } from "@/schemas/login.schema"
+import type { RegisterForm } from "@/schemas/register.schema"
+import type { OtpForm } from "@/schemas/resetPassword.schema"
 import type { User } from "@/types/user.type"
 
 export const users: User[] = [
@@ -27,29 +29,37 @@ export async function login(loginInfo: LoginForm) {
   }
 }
 
-export async function register() {
+export async function register(registerInfo: RegisterForm) {
   await mockDelay()
 
-  // kiểm tra email đã tồn tại
+  const existed = users.find((u) => u.email === registerInfo.email)
 
-  // thêm user mới vào users[]
+  if (existed) {
+    throw new Error("Email already exists")
+  }
+
+  users.push({
+    id: crypto.randomUUID(),
+    lastLogin: new Date().toISOString(),
+    ...registerInfo,
+  })
 
   return {
     message: "Register successfully",
   }
 }
 
-export async function forgotPassword(email: string) {
+export async function forgotPassword(data: { email: string }) {
   await mockDelay()
-
+  console.log(data)
   return {
-    otp: "123456",
+    message: "OTP has been sent successfully.",
   }
 }
 
-export async function resetPassword() {
+export async function resetPassword(data: OtpForm) {
   await mockDelay()
-
+  console.log(data)
   return {
     message: "Password updated successfully",
   }

@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/input-otp"
 import PasswordInput from "@/components/PasswordInput"
 import CountdownTimer from "@/components/CountdownTimer"
+import { useMutation } from "@tanstack/react-query"
+import { resetPassword } from "@/services/auth/api/auth.api"
 
 const ResetPassword = () => {
   const navigate = useNavigate()
@@ -28,9 +30,18 @@ const ResetPassword = () => {
     },
   })
 
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPassword,
+    onSuccess: () => {
+      navigate(routes.login)
+    },
+    onError: (error) => {
+      console.log(error)
+    },
+  })
+
   const onOtpSubmit = (data: OtpForm) => {
-    console.log(data)
-    navigate(routes.dashboard)
+    resetPasswordMutation.mutate(data)
   }
 
   const handleResendOtp = () => {

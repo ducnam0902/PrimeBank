@@ -10,6 +10,8 @@ import { loginSchema } from "@/schemas/login.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import zod from "zod"
+import { useMutation } from "@tanstack/react-query"
+import { forgotPassword } from "@/services/auth/api/auth.api"
 
 const ForgotPasswordSchema = loginSchema.pick({ email: true })
 type ForgotPasswordForm = zod.infer<typeof ForgotPasswordSchema>
@@ -23,9 +25,18 @@ const ForgotPasswordPage = () => {
     },
   })
 
+  const forgotPasswordMutation = useMutation({
+    mutationFn: forgotPassword,
+    onSuccess: () => {
+        navigate(routes.resetPassword, { replace: true })
+    },
+    onError: (error) => {
+      console.log(error)
+    },
+  })
+
   const onSubmit = (data: ForgotPasswordForm) => {
-    console.log(data)
-    navigate(routes.resetPassword, { replace: true })
+    forgotPasswordMutation.mutate(data);
   }
 
   return (

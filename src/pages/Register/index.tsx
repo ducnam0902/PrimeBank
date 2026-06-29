@@ -6,7 +6,9 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { routes } from "@/routes/router"
 import { registerSchema, type RegisterForm } from "@/schemas/register.schema"
+import { register } from "@/services/auth/api/auth.api"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
 import { useNavigate } from "react-router"
 
@@ -23,9 +25,18 @@ const RegisterPage = () => {
     },
   })
 
+  const registerMutation = useMutation({
+    mutationFn: register,
+    onSuccess: () => {
+      navigate(routes.login)
+    },
+    onError: (error) => {
+      console.log(error)
+    },
+  })
+
   const onSubmit = (data: RegisterForm) => {
-    console.log(data)
-    navigate(routes.dashboard)
+    registerMutation.mutateAsync(data)
   }
 
   return (
@@ -153,7 +164,7 @@ const RegisterPage = () => {
                       Tôi đồng ý với điều khoản sử dụng
                     </FieldLabel>
                   </Field>
-                  <div className="h-4 mb-4">
+                  <div className="mb-4 h-4">
                     <FieldError data-invalid={fieldState.invalid}>
                       {fieldState.error?.message ?? ""}
                     </FieldError>
