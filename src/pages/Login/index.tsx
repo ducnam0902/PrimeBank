@@ -10,14 +10,30 @@ import { Input } from "@/components/ui/input"
 import { loginSchema, type LoginForm } from "@/schemas/login.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
+import { useMutation } from "@tanstack/react-query"
+import { login } from "@/services/auth/api/auth.api"
+import { useAuthStore } from "@/services/auth/store/auth.store"
 
 const LoginPage = () => {
+  const { setAuth } = useAuthStore()
   const navigate = useNavigate()
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
+    },
+  })
+
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      setAuth(data.user, data.accessToken)
+
+      navigate(routes.dashboard)
+    },
+    onError: (error) => {
+      console.log(error)
     },
   })
 
@@ -30,8 +46,7 @@ const LoginPage = () => {
   }
 
   const onSubmit = (data: LoginForm) => {
-    console.log(data)
-    navigate(routes.dashboard);
+    loginMutation.mutate(data)
   }
 
   return (

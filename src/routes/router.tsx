@@ -1,37 +1,49 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router"
 
-import AuthLayout from "@/layouts/AuthLayout";
-import MainLayout from "@/layouts/MainLayout";
+import AuthLayout from "@/layouts/AuthLayout"
+import MainLayout from "@/layouts/MainLayout"
 
-import LoginPage from "@/pages/Login";
-import RegisterPage from "@/pages/Register";
-import ForgotPasswordPage from "@/pages/ForgotPassword";
-import DashboardPage from "@/pages/Dashboard";
+import LoginPage from "@/pages/Login"
+import RegisterPage from "@/pages/Register"
+import ForgotPasswordPage from "@/pages/ForgotPassword"
+import DashboardPage from "@/pages/Dashboard"
 
-import ProtectedRoute from "@/routes/ProtectedRoute";
+import ProtectedRoute from "@/routes/ProtectedRoute"
+import PublicRoute from "./PublicRoute"
+import ResetPassword from "@/pages/ResetPassword"
 
 export const routes = {
   login: "/login",
   register: "/register",
   forgotPassword: "/forgot-password",
-  dashboard: "/",
-};
+  resetPassword: "/reset-password",
+  dashboard: "/dashboard",
+}
 
 export const router = createBrowserRouter([
   {
-    element: <AuthLayout />,
+    element: <PublicRoute />,
     children: [
       {
-        path: routes.login,
-        element: <LoginPage />,
-      },
-      {
-        path: routes.register,
-        element: <RegisterPage />,
-      },
-      {
-        path: routes.forgotPassword,
-        element: <ForgotPasswordPage />,
+        element: <AuthLayout />,
+        children: [
+          {
+            path: routes.login,
+            element: <LoginPage />,
+          },
+          {
+            path: routes.register,
+            element: <RegisterPage />,
+          },
+          {
+            path: routes.forgotPassword,
+            element: <ForgotPasswordPage />,
+          },
+          {
+            path: routes.resetPassword,
+            element: <ResetPassword />,
+          },
+        ],
       },
     ],
   },
@@ -46,8 +58,16 @@ export const router = createBrowserRouter([
             path: routes.dashboard,
             element: <DashboardPage />,
           },
+          {
+            path: "/",
+            element: <Navigate to={routes.dashboard} replace />,
+          },
         ],
       },
     ],
   },
-]);
+  {
+    path: "*",
+    element: <Navigate to={routes.login} replace />,
+  },
+])
