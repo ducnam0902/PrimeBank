@@ -1,20 +1,195 @@
-import CardShell from '@/components/CardShell'
-import React from 'react'
+import CardShell from "@/components/CardShell"
+import PasswordInput from "@/components/PasswordInput"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { routes } from "@/routes/router"
+import { registerSchema, type RegisterForm } from "@/schemas/register.schema"
+import { register } from "@/services/auth/api/auth.api"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
+import { Controller, useForm } from "react-hook-form"
+import { useNavigate } from "react-router"
+import { toast } from "sonner"
 
 const RegisterPage = () => {
+  const navigate = useNavigate()
+  const form = useForm<RegisterForm>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+      acceptTerms: false,
+    },
+  })
+
+  const registerMutation = useMutation({
+    mutationFn: register,
+    onSuccess: () => {
+      toast.success("Đăng kí thành công!");
+      navigate(routes.login)
+    },
+    onError: (error) => {
+      toast.error("Có lỗi trong quá trình xử lý. Vui lòng thử lại sau!")
+      console.log(error)
+    },
+  })
+
+  const onSubmit = (data: RegisterForm) => {
+    registerMutation.mutateAsync(data)
+  }
+
   return (
     <div>
       <CardShell title="Đăng ký">
-        <label className="mb-3 block">
-          <span className="text-xs font-medium text-foreground/80">Email</span>
-          <div className="relative mt-1.5">
-            <input
-              type={"email"}
-              placeholder={"Nhập email"}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-ring"
-            />
-          </div>
-        </label>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+          <Controller
+            name="fullName"
+            control={form.control}
+            render={({ field, fieldState }) => {
+              return (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor="fullName"
+                    data-invalid={fieldState.invalid}
+                  >
+                    Họ và tên
+                  </FieldLabel>
+                  <Input
+                    id="fullName"
+                    placeholder="Nhập họ và tên"
+                    {...field}
+                  />
+                  <span className="mb-1 h-4">
+                    <FieldError data-invalid={fieldState.invalid}>
+                      {fieldState.error?.message ?? ""}
+                    </FieldError>
+                  </span>
+                </Field>
+              )
+            }}
+          />
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => {
+              return (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="email" data-invalid={fieldState.invalid}>
+                    Email
+                  </FieldLabel>
+                  <Input id="email" placeholder="Nhập email" {...field} />
+                  <span className="mb-1 h-4">
+                    <FieldError data-invalid={fieldState.invalid}>
+                      {fieldState.error?.message ?? ""}
+                    </FieldError>
+                  </span>
+                </Field>
+              )
+            }}
+          />
+          <Controller
+            name="phoneNumber"
+            control={form.control}
+            render={({ field, fieldState }) => {
+              return (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor="phoneNumber"
+                    data-invalid={fieldState.invalid}
+                  >
+                    Số điện thoại
+                  </FieldLabel>
+                  <Input
+                    id="phoneNumber"
+                    placeholder="Nhập số điện thoại"
+                    {...field}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "")
+                      field.onChange(value)
+                    }}
+                  />
+                  <span className="mb-1 h-4">
+                    <FieldError data-invalid={fieldState.invalid}>
+                      {fieldState.error?.message ?? ""}
+                    </FieldError>
+                  </span>
+                </Field>
+              )
+            }}
+          />
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => {
+              return (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor="password"
+                    data-invalid={fieldState.invalid}
+                  >
+                    Mật khẩu
+                  </FieldLabel>
+                  <PasswordInput
+                    id="password"
+                    placeholder="Nhập mật khẩu"
+                    {...field}
+                  />
+                  <span className="mb-1 h-4">
+                    <FieldError data-invalid={fieldState.invalid}>
+                      {fieldState.error?.message ?? ""}
+                    </FieldError>
+                  </span>
+                </Field>
+              )
+            }}
+          />
+
+          <Controller
+            name="acceptTerms"
+            control={form.control}
+            render={({ field, fieldState }) => {
+              return (
+                <div>
+                  <Field
+                    orientation="horizontal"
+                    data-invalid={fieldState.invalid}
+                  >
+                    <Checkbox
+                      id="acceptTerms"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <FieldLabel htmlFor="acceptTerms">
+                      Tôi đồng ý với điều khoản sử dụng
+                    </FieldLabel>
+                  </Field>
+                  <div className="mb-4 h-4">
+                    <FieldError data-invalid={fieldState.invalid}>
+                      {fieldState.error?.message ?? ""}
+                    </FieldError>
+                  </div>
+                </div>
+              )
+            }}
+          />
+
+          <Button className="w-full rounded-2xl py-5 text-sm" type="submit" disabled={registerMutation.isPending}>
+            Đăng ký
+          </Button>
+        </form>
+        <div className="mt-auto pt-5 text-center text-sm text-muted-foreground">
+          Đã có tài khoản?{"  "}
+          <button
+            onClick={() => navigate(routes.login)}
+            className="font-medium text-primary hover:underline"
+          >
+            Đăng nhập
+          </button>
+        </div>
       </CardShell>
     </div>
   )

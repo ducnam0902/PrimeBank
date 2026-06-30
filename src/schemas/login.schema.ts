@@ -6,11 +6,11 @@ export const loginSchema = zod.object({
   password: zod
     .string()
     .min(12, "Mật khẩu phải có ít nhất 12 ký tự")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(/[A-Z]/, "Mật khẩu phải chứa ít nhất một chữ cái viết hoa")
+    .regex(/[0-9]/, "Mật khẩu phải chứa ít nhất một số")
     .regex(
       /[^A-Za-z0-9]/,
-      "Password must contain at least one special character"
+      "Mật khẩu phải chứa ít nhất một ký tự đặc biệt"
     ),
 })
 
