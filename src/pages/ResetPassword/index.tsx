@@ -18,6 +18,7 @@ import PasswordInput from "@/components/PasswordInput"
 import CountdownTimer from "@/components/CountdownTimer"
 import { useMutation } from "@tanstack/react-query"
 import { resetPassword } from "@/services/auth/api/auth.api"
+import { toast } from "sonner"
 
 const ResetPassword = () => {
   const navigate = useNavigate()
@@ -33,9 +34,11 @@ const ResetPassword = () => {
   const resetPasswordMutation = useMutation({
     mutationFn: resetPassword,
     onSuccess: () => {
+      toast.success("Thay đổi mật khẩu thành công!");
       navigate(routes.login)
     },
     onError: (error) => {
+       toast.error("Có lỗi trong quá trình xử lý. Vui lòng thử lại sau!")
       console.log(error)
     },
   })
@@ -140,7 +143,7 @@ const ResetPassword = () => {
           <p className="mb-3 text-center text-sm text-muted-foreground">
             Gửi lại mã sau <CountdownTimer callback={handleResendOtp} />
           </p>
-          <Button className="w-full rounded-2xl py-5 text-sm" type="submit">
+          <Button className="w-full rounded-2xl py-5 text-sm" type="submit" disabled={resetPasswordMutation.isPending}>
             Xác nhận
           </Button>
         </form>

@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
 import { useNavigate } from "react-router"
+import { toast } from "sonner"
 
 const RegisterPage = () => {
   const navigate = useNavigate()
@@ -28,9 +29,11 @@ const RegisterPage = () => {
   const registerMutation = useMutation({
     mutationFn: register,
     onSuccess: () => {
+      toast.success("Đăng kí thành công!");
       navigate(routes.login)
     },
     onError: (error) => {
+      toast.error("Có lỗi trong quá trình xử lý. Vui lòng thử lại sau!")
       console.log(error)
     },
   })
@@ -174,7 +177,7 @@ const RegisterPage = () => {
             }}
           />
 
-          <Button className="w-full rounded-2xl py-5 text-sm" type="submit">
+          <Button className="w-full rounded-2xl py-5 text-sm" type="submit" disabled={registerMutation.isPending}>
             Đăng ký
           </Button>
         </form>

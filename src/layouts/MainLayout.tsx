@@ -16,6 +16,7 @@ import {
 import { routes } from "@/routes/router"
 import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/services/auth/store/auth.store"
+import { toast } from "sonner"
 
 const items: { to: string; label: string; icon: typeof LayoutGrid }[] = [
   { to: "/", label: "Tổng quan", icon: LayoutGrid },
@@ -34,6 +35,7 @@ export default function MainLayout() {
   const { setAuth } = useAuthStore()
   const handleLogout = () => {
     setAuth(null, "")
+    toast.success("Đăng xuất thành công!");
     navigate(routes.login, { replace: true })
   }
 

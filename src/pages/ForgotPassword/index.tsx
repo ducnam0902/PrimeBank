@@ -12,6 +12,7 @@ import { Controller, useForm } from "react-hook-form"
 import zod from "zod"
 import { useMutation } from "@tanstack/react-query"
 import { forgotPassword } from "@/services/auth/api/auth.api"
+import { toast } from "sonner"
 
 const ForgotPasswordSchema = loginSchema.pick({ email: true })
 type ForgotPasswordForm = zod.infer<typeof ForgotPasswordSchema>
@@ -28,15 +29,17 @@ const ForgotPasswordPage = () => {
   const forgotPasswordMutation = useMutation({
     mutationFn: forgotPassword,
     onSuccess: () => {
-        navigate(routes.resetPassword, { replace: true })
+      toast.success("Gửi OTP thành công!")
+      navigate(routes.resetPassword, { replace: true })
     },
     onError: (error) => {
+      toast.error("Có lỗi trong quá trình xử lý. Vui lòng thử lại sau!")
       console.log(error)
     },
   })
 
   const onSubmit = (data: ForgotPasswordForm) => {
-    forgotPasswordMutation.mutate(data);
+    forgotPasswordMutation.mutate(data)
   }
 
   return (
@@ -65,7 +68,7 @@ const ForgotPasswordPage = () => {
               )
             }}
           />
-          <Button className="w-full rounded-2xl py-5 text-sm" type="submit">
+          <Button className="w-full rounded-2xl py-5 text-sm" type="submit" disabled={forgotPasswordMutation.isPending}>
             Gửi mã OTP
           </Button>
         </form>
