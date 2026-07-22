@@ -11,4 +11,15 @@ function mockDelay(timout: number = 1000): Promise<void> {
   })
 }
 
+export function formatCurrency(value: number): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(value)
+}
+
+export const formatGrowth = (value: number, fractionDigits = 1) => {
+  return `${value.toFixed(fractionDigits)}%`
+}
+
 export default mockDelay
